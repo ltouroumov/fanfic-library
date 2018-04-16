@@ -28,8 +28,9 @@ class XenForoAdapter(BaseAdapter):
         doc = BeautifulSoup(content, "html.parser")
 
         title = doc.find('h1').string.strip()
+        author = doc.select_one('p#pageDescription a.username').string.strip()
 
-        return Fanfic(title=title, thread_url=self.base_url)
+        return Fanfic(title=title, author=author, thread_url=self.base_url)
 
     def fetch_threadmarks(self, fanfic_id):
         threadmarks_url = "%sthreadmarks" % self.base_url
@@ -40,7 +41,7 @@ class XenForoAdapter(BaseAdapter):
         doc = BeautifulSoup(content, "html.parser")
 
         threadmark_list = doc.select('div.threadmarkList ol li.threadmarkListItem')
-        threadmarks = [Threadmark(post_id=el.a['data-previewurl'].split('/')[1],
+        threadmarks = [Threadmark(post_id=int(el.a['data-previewurl'].split('/')[1]),
                                   fanfic_id=fanfic_id,
                                   title=el.a.string.strip(),
                                   words=int(el['data-words']),

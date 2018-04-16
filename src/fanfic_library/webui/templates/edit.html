@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block rows %}
+<div class="row">
+    <div class="column">
+        <h1>Edit: {{ fanfic.title }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="column">
+        <form method="post">
+            <label>ID</label>
+            <input type="number" value="{{ fanfic.id }}" disabled />
+            <label>Thread URL</label>
+            <input type="text" value="{{ fanfic.thread_url }}" disabled />
+            <label>Title</label>
+            <input type="text" name="title" value="{{ fanfic.title }}" />
+            <label>Author</label>
+            <input type="text" name="author" value="{{ fanfic.author }}" />
+            <label>Words</label>
+            <input type="number" name="words" value="{{ fanfic.words }}" />
+            <label>Summary</label>
+            <textarea name="summary">{{ fanfic.summary }}</textarea>
+            <button class="button" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

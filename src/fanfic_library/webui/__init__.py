@@ -1,4 +1,9 @@
+import itertools
+from pprint import pprint
+
 from flask import Flask, render_template, request, redirect, url_for
+
+from fanfic_library import utils
 from fanfic_library.data import session, Fanfic, Threadmark
 from fanfic_library.adapter import create_adapter
 app = Flask(__name__)
@@ -41,6 +46,23 @@ def show(fid: int):
                                breadcrumbs=[('Index', url_for('index'))])
 
 
+@app.route('/fic/<int:fid>/edit', methods=['GET', 'POST'])
+def edit(fid: int):
+    fanfic = session.query(Fanfic).filter(Fanfic.id == fid).first()
+
+    if request.method == 'POST':
+        fanfic.title = request.form['title']
+        fanfic.author = request.form['author']
+        fanfic.words = request.form['words']
+        fanfic.summary = request.form['summary']
+        session.commit()
+        return redirect(url_for('show', fid=fanfic.id))
+    else:
+        return render_template('edit.html',
+                               fanfic=fanfic,
+                               breadcrumbs=[('Index', url_for('index'))])
+
+
 @app.route('/fic/<int:fid>/post/<int:tmid>', methods=['GET'])
 def view(fid: int, tmid: int):
     fanfic = session.query(Fanfic).filter(Fanfic.id == fid).first()
@@ -72,10 +94,32 @@ def refresh(fid: int):
     fanfic = session.query(Fanfic).filter(Fanfic.id == fid).first()
     adapter = create_adapter(fanfic.thread_url)
 
-    threadmarks = adapter.fetch_threadmarks(fanfic.id)
-    fanfic.words = sum(tm.words for tm in threadmarks)
+    update_fanfic(adapter, fanfic)
 
-    session.add_all(threadmarks)
+    word_count = update_threadmarks(adapter, fanfic)
+
+    fanfic.words = word_count
     session.commit()
 
     return redirect(url_for('show', fid=fid))
+
+
+def update_fanfic(adapter, fanfic):
+    cur_fanfic = adapter.fetch_metadata()
+    fanfic.update_with(cur_fanfic)
+
+
+def update_threadmarks(adapter, fanfic):
+    old_threadmarks = utils.make_ordered_dict(fanfic.threadmarks, key=lambda tm: tm.post_id)
+    cur_threadmarks = adapter.fetch_threadmarks(fanfic.id)
+    new_threadmarks = []
+    pprint(old_threadmarks)
+    for cur_tm in cur_threadmarks:
+        old_tm = old_threadmarks.get(cur_tm.post_id, None)
+        if old_tm is None:
+            new_threadmarks.append(cur_tm)
+        elif hash(cur_tm) != hash(old_tm):
+            old_tm.update_with(cur_tm)
+    session.add_all(new_threadmarks)
+
+    return sum(tm.words for tm in itertools.chain(old_threadmarks.values(), new_threadmarks))
