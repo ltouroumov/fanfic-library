@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% macro navigation() %}
+<div class="navigation">
+    {% if prev %}
+    <a href="{{ url_for('view', fid=fanfic.id, tmid=prev.post_id) }}" class="button button-small">&laquo; Prev</a>
+    {% endif %}
+    {% if next %}
+    <a href="{{ url_for('view', fid=fanfic.id, tmid=next.post_id) }}" class="button button-small">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% block rows %}
+<div class="row">
+    <div class="column">
+        <h1>{{ threadmark.title }}</h1>
+        <p>
+            <b>Published:</b> {{ threadmark.published }}
+            <b>Words:</b> {{ threadmark.words }}
+            <b>Likes:</b> {{ threadmark.likes }}
+        </p>
+    </div>
+</div>
+{{ navigation() }}
+<div class="row">
+    <div class="column">
+        {% if contents %}
+        {{ contents|safe }}
+        {% else %}
+        No local content
+        {% endif %}
+    </div>
+</div>
+{{ navigation() }}
+{% endblock %}

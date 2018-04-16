@@ -1,0 +1,38 @@
+div.breadcrumbs {
+    margin-top: 10px;
+    background: #ccc;
+    border-radius: 5px;
+}
+
+div.breadcrumbs ul {
+  list-style: none;
+  margin: 5px 0;
+}
+
+div.breadcrumbs ul li {
+  display: inline;
+}
+
+div.breadcrumbs ul li:before {
+    content: '/ ';
+}
+
+div.breadcrumbs ul li:first-child:before {
+    content: '';
+}
+
+div.navigation {
+    float: right;
+}
+
+div.navigation a.button {
+
+}
+
+/* Custom size */
+.button-small {
+  font-size: .8rem;
+  height: 2.8rem;
+  line-height: 2.8rem;
+  padding: 0 1.5rem;
+}

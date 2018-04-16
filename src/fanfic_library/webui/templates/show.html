@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block rows %}
+<div class="row">
+    <div class="column">
+        <h1>{{ fanfic.title }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="column">
+        <p>
+            <a href="{{ fanfic.thread_url }}" target="_blank">Link</a><br/>
+            <b>Author:</b> {{ fanfic.author }}<br/>
+            <b>Word Count:</b> {{ fanfic.words }}<br/>
+            {{ fanfic.summary }}
+        </p>
+    </div>
+    <div class="column column-25">
+        <p>
+        <a href="?do=edit" class="button">Edit</a><br/>
+        <a href="?do=delete" class="button">Delete</a><br/>
+        <a href="{{ url_for('refresh', fid=fanfic.id) }}" class="button">Refresh</a>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="column">
+        <h2>Threadmarks</h2>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Words</th>
+                <th>Likes</th>
+                <th>Author</th>
+                <th>Published</th>
+            </tr>
+            {% for tm in threadmarks %}
+            <tr>
+                <td><a href="{{ url_for('view', fid=fanfic.id, tmid=tm.post_id) }}">{{ tm.title }}</a></td>
+                <td>{{ tm.words }}</td>
+                <td>{{ tm.likes }}</td>
+                <td>{{ tm.author }}</td>
+                <td>{{ tm.published }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
