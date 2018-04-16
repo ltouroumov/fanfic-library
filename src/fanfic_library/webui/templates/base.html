@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <title>Fanfic Library</title>
 
+    <!--
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
     <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
     <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+    -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='foundation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='icons/foundation-icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
 </head>
 <body>
 {% block body %}
-<div class="container">
+<div class="grid-container">
     {% if breadcrumbs %}
-    <div class="row">
-        <div class="column breadcrumbs">
-            <ul>
+    <div class="grid-x">
+        <div class="cell auto breadcrumbs-cell">
+            <ul class="breadcrumbs">
                 {% for title, link in breadcrumbs %}
                 <li><a href="{{ link }}">{{ title }}</a></li>
                 {% endfor %}
@@ -28,5 +33,10 @@
     {% endblock %}
 </div>
 {% endblock %}
+
+    <script src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/what-input.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/foundation.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

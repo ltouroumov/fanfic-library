@@ -1,14 +1,12 @@
-div.breadcrumbs {
+div.breadcrumbs-cell {
     margin-top: 10px;
-    background: #ccc;
-    border-radius: 5px;
+    padding: 5px;
 }
 
-div.breadcrumbs ul {
-  list-style: none;
-  margin: 5px 0;
+div.breadcrumbs-cell ul.breadcrumbs {
+  margin: 0;
 }
-
+/*
 div.breadcrumbs ul li {
   display: inline;
 }
@@ -20,13 +18,47 @@ div.breadcrumbs ul li:before {
 div.breadcrumbs ul li:first-child:before {
     content: '';
 }
-
+*/
 div.navigation {
     float: right;
 }
 
 div.navigation a.button {
 
+}
+
+div.actions {
+    margin-left: 5px;
+}
+
+div.actions > .cell {
+    padding: 0 5px 5px 0;
+}
+
+div.actions .button {
+    display: block;
+    margin-bottom: 0
+}
+
+div.fanfic-item {
+    margin-bottom: 5px;
+
+}
+
+div.fanfic-item a.title {
+    display: block;
+    font-size: 1.2rem;
+}
+
+div.cell.contents {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+
+table td.success {
+    background-color: #3adb76;
 }
 
 /* Custom size */

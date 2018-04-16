@@ -1,27 +1,40 @@
 {% extends "base.html" %}
 
 {% block rows %}
-<div class="row">
-    <div class="column">
+<div class="grid-x">
+    <div class="cell auto">
         <h1>Fanfic Library</h1>
+
+        <form method="get">
+            <div class="input-group">
+                <input class="input-group-field" type="text" name="q" placeholder="Search ..."/>
+                <div class="input-group-button">
+                    <button type="submit" class="button"><i class="fi-magnifying-glass"></i></button>
+                </div>
+            </div>
+        </form>
+
+        <form method="post">
+            <div class="input-group">
+                <input class="input-group-field" type="text" name="thread_url" placeholder="Enter an URL ..."/>
+                <div class="input-group-button">
+                    <button type="submit" class="button">Add</button>
+                </div>
+            </div>
+        </form>
+
         <div class="fanfic-list">
             {% for fanfic in fanfics %}
-            <div class="fanfic-item">
+            <div class="callout fanfic-item">
                 <a class="title" href="{{ url_for('show', fid=fanfic.id) }}">{{ fanfic.title }}</a>
-                <span class="infoline">by: {{ fanfic.author }}, {{ fanfic.words }}</span>
+                <span class="infoline">by: {{ fanfic.author }}, {{ fanfic.words }} words</span>
+                {% if fanfic.summary %}
+                <p>{{ fanfic.summary }}</p>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
 
-        <form method="post">
-            <div>
-                <label>Thread URL</label>
-                <input type="text" name="thread_url" />
-            </div>
-            <div>
-                <button type="submit">Add Fanfic</button>
-            </div>
-        </form>
     </div>
 </div>
 {% endblock %}

@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
 {% macro navigation() %}
-<div class="navigation">
-    {% if prev %}
-    <a href="{{ url_for('view', fid=fanfic.id, tmid=prev.post_id) }}" class="button button-small">&laquo; Prev</a>
-    {% endif %}
-    {% if next %}
-    <a href="{{ url_for('view', fid=fanfic.id, tmid=next.post_id) }}" class="button button-small">Next &raquo;</a>
-    {% endif %}
+<div class="grid-x">
+    <div class="cell text-right">
+        {% if prev %}
+        <a href="{{ url_for('view', fid=fanfic.id, tmid=prev.post_id) }}" class="button small">&laquo; Prev</a>
+        {% endif %}
+        <a href="{{ url_for('show', fid=fanfic.id) }}" class="button small">Index</a>
+        {% if next %}
+        <a href="{{ url_for('view', fid=fanfic.id, tmid=next.post_id) }}" class="button small">Next &raquo;</a>
+        {% endif %}
+    </div>
 </div>
 {% endmacro %}
 
 {% block rows %}
-<div class="row">
-    <div class="column">
+<div class="grid-x">
+    <div class="cell">
         <h1>{{ threadmark.title }}</h1>
         <p>
             <b>Published:</b> {{ threadmark.published }}
@@ -23,8 +26,8 @@
     </div>
 </div>
 {{ navigation() }}
-<div class="row">
-    <div class="column">
+<div class="grid-x">
+    <div class="cell contents">
         {% if contents %}
         {{ contents|safe }}
         {% else %}

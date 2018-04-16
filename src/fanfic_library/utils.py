@@ -12,7 +12,7 @@ def make_ordered_dict(iterable, key):
 
 
 def or_else(val1, val2):
-    if val1 is None:
-        return val2
-    else:
+    if val1:
         return val1
+    else:
+        return val2

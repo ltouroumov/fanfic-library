@@ -50,15 +50,19 @@ class ThreadCache:
         self.cache_dir = cache_dir
         os.makedirs(self.cache_dir, exist_ok=True)
 
-    def store_post(self, thread_id, post_id, contents):
-        file_name = path.join(self.cache_dir, 'threads/%d/posts/%s.html' % (thread_id, post_id))
+    def store_post(self, thread_key, post_id, contents):
+        file_name = path.join(self.cache_dir, 'threads/%s/posts/%s.html' % (thread_key, post_id))
         print("Storing Post:", file_name)
         os.makedirs(path.dirname(file_name), exist_ok=True)
         with open(file_name, mode="w+") as fd:
             fd.write(contents)
 
-    def fetch_post(self, thread_id, post_id):
-        file_name = path.join(self.cache_dir, 'threads/%d/posts/%s.html' % (thread_id, post_id))
+    def has_post(self, thread_key, post_id):
+        file_name = path.join(self.cache_dir, 'threads/%s/posts/%s.html' % (thread_key, post_id))
+        return path.exists(file_name)
+
+    def fetch_post(self, thread_key, post_id):
+        file_name = path.join(self.cache_dir, 'threads/%s/posts/%s.html' % (thread_key, post_id))
         print("Fetching Post:", file_name)
         if not path.exists(file_name):
             return None

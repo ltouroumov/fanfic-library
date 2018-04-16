@@ -1,31 +1,42 @@
 {% extends "base.html" %}
 
 {% block rows %}
-<div class="row">
-    <div class="column">
-        <h1>{{ fanfic.title }}</h1>
+<div class="grid-x">
+    <div class="cell auto">
+        <h2>{{ fanfic.title }}</h2>
     </div>
 </div>
-<div class="row">
-    <div class="column">
-        <p>
-            <a href="{{ fanfic.thread_url }}" target="_blank">Link</a><br/>
+<div class="grid-x">
+    <div class="cell auto">
+        <div class="callout">
             <b>Author:</b> {{ fanfic.author }}<br/>
             <b>Word Count:</b> {{ fanfic.words }}<br/>
-            {{ fanfic.summary }}
-        </p>
+            <p>{{ fanfic.summary }}</p>
+            <a href="{{ fanfic.thread_url }}" target="_blank">Open Original Link</a> <small>{{ fanfic.thread_type }} | {{ fanfic.thread_id }}</small>
+        </div>
     </div>
-    <div class="column column-25">
-        <p>
-        <a href="{{ url_for('edit', fid=fanfic.id) }}" class="button">Edit</a><br/>
-        <a href="?do=delete" onclick="return confirm('Really Delete?');" class="button">Delete</a><br/>
-        <a href="{{ url_for('refresh', fid=fanfic.id) }}" class="button">Refresh</a>
-        </p>
+    <div class="cell large-2 medium-3">
+        <div class="grid-x actions">
+            <div class="cell small-6">
+                <a href="{{ url_for('edit', fid=fanfic.id) }}" class="button small secondary"><i class="fi-pencil"></i> Edit</a>
+            </div>
+            <div class="cell small-6">
+                <a href="?do=delete" class="button small alert" onclick="return confirm('Really Delete?');"><i class="fi-trash"></i> Delete</a>
+            </div>
+            <div class="cell small-6">
+                <a href="{{ url_for('refresh', fid=fanfic.id) }}" class="button small secondary"><i class="fi-refresh"></i> Refresh</a>
+            </div>
+            <div class="cell small-6">
+                <a href="{{ url_for('fetch', fid=fanfic.id) }}" class="button small secondary" onclick="return confirm('This can take long, proceed?');"><i class="fi-download"></i> Fetch</a>
+            </div>
+            <div class="cell small-12">
+                <a href="#" class="button small"><i class="fi-archive"></i> Export</a>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="column">
-        <h2>Threadmarks</h2>
         <table>
             <tr>
                 <th>Title</th>
@@ -33,6 +44,7 @@
                 <th>Likes</th>
                 <th>Author</th>
                 <th>Published</th>
+                <th>Status</th>
             </tr>
             {% for tm in threadmarks %}
             <tr>
@@ -41,6 +53,7 @@
                 <td>{{ tm.likes }}</td>
                 <td>{{ tm.author }}</td>
                 <td>{{ tm.published }}</td>
+                {% if status[tm.post_id] %}<td class="success">Local</td>{% else %}<td>N/A</td>{% endif %}
             </tr>
             {% endfor %}
         </table>

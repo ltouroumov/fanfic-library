@@ -11,10 +11,19 @@ class BaseAdapter:
         self.base_url = self.normalize_url(base_url)
 
     def normalize_url(self, url):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def fetch_metadata(self):
-        raise NotImplemented
+        raise NotImplementedError()
+
+    def fetch_threadmarks(self, fanfic):
+        raise NotImplementedError()
+
+    def fetch_chapters(self, fanfic):
+        raise NotImplementedError()
+
+    def get_content(self, fanfic_id, post_id):
+        raise NotImplementedError()
 
 
 class AdapterRegistry:

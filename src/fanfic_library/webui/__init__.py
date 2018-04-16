@@ -4,6 +4,7 @@ from pprint import pprint
 from flask import Flask, render_template, request, redirect, url_for
 
 from fanfic_library import utils
+from fanfic_library.cache import thread
 from fanfic_library.data import session, Fanfic, Threadmark
 from fanfic_library.adapter import create_adapter
 app = Flask(__name__)
@@ -21,11 +22,15 @@ def index():
 
         adapter = create_adapter(thread_url)
         fanfic = adapter.fetch_metadata()
+        word_count = update_threadmarks(adapter, fanfic)
+        fanfic.words = utils.or_else(word_count, fanfic.words)
         session.add(fanfic)
         session.commit()
         return redirect(url_for('index'))
 
-    return render_template('index.html', fanfics=session.query(Fanfic))
+    fanfics = session.query(Fanfic).order_by(Fanfic.title)
+
+    return render_template('index.html', fanfics=fanfics)
 
 
 @app.route('/fic/<int:fid>', methods=['GET'])
@@ -40,9 +45,13 @@ def show(fid: int):
     elif action == 'edit':
         return 'Not Implemented'
     else:
+        threadmarks = session.query(Threadmark).filter(Threadmark.fanfic_id == fanfic.id).order_by(Threadmark.post_id)
+        status = {tm.post_id: thread.has_post(fanfic.thread_key, tm.post_id) for tm in threadmarks}
+
         return render_template('show.html',
                                fanfic=fanfic,
-                               threadmarks=session.query(Threadmark).filter(Threadmark.fanfic_id == fanfic.id).order_by(Threadmark.post_id),
+                               threadmarks=threadmarks,
+                               status=status,
                                breadcrumbs=[('Index', url_for('index'))])
 
 
@@ -79,7 +88,7 @@ def view(fid: int, tmid: int):
         .first()
 
     adapter = create_adapter(fanfic.thread_url)
-    contents = adapter.get_content(fanfic.id, threadmark.post_id)
+    contents = adapter.get_content(fanfic.thread_key, threadmark.post_id)
 
     return render_template('view.html',
                            fanfic=fanfic,
@@ -98,8 +107,18 @@ def refresh(fid: int):
 
     word_count = update_threadmarks(adapter, fanfic)
 
-    fanfic.words = word_count
+    fanfic.words = utils.or_else(word_count, fanfic.words)
     session.commit()
+
+    return redirect(url_for('show', fid=fid))
+
+
+@app.route('/fic/<int:fid>/fetch', methods=['GET'])
+def fetch(fid: int):
+    fanfic = session.query(Fanfic).filter(Fanfic.id == fid).first()
+    adapter = create_adapter(fanfic.thread_url)
+
+    adapter.fetch_chapters(fanfic)
 
     return redirect(url_for('show', fid=fid))
 
@@ -111,15 +130,20 @@ def update_fanfic(adapter, fanfic):
 
 def update_threadmarks(adapter, fanfic):
     old_threadmarks = utils.make_ordered_dict(fanfic.threadmarks, key=lambda tm: tm.post_id)
-    cur_threadmarks = adapter.fetch_threadmarks(fanfic.id)
+    cur_threadmarks = adapter.fetch_threadmarks(fanfic)
     new_threadmarks = []
+
     pprint(old_threadmarks)
+    pprint(cur_threadmarks)
+
     for cur_tm in cur_threadmarks:
         old_tm = old_threadmarks.get(cur_tm.post_id, None)
         if old_tm is None:
             new_threadmarks.append(cur_tm)
         elif hash(cur_tm) != hash(old_tm):
             old_tm.update_with(cur_tm)
+
+    pprint(new_threadmarks)
     session.add_all(new_threadmarks)
 
     return sum(tm.words for tm in itertools.chain(old_threadmarks.values(), new_threadmarks))
