@@ -36,7 +36,7 @@ class XenForoAdapter(BaseAdapter):
 
         domain, thread_id = self.extract_url('domain', 'id')
 
-        title = doc.find('h1').string.strip()
+        title = doc.find('h1').text.strip()
         author = doc.select_one('p#pageDescription a.username').string.strip()
 
         return Fanfic(thread_id=thread_id,
@@ -46,8 +46,6 @@ class XenForoAdapter(BaseAdapter):
 
     def fetch_threadmarks(self, fanfic):
         threadmarks_url = "%sthreadmarks" % self.base_url
-
-        print("Threadmarks URL:", threadmarks_url)
 
         content = http.get(threadmarks_url)
         doc = BeautifulSoup(content, "html.parser")
@@ -76,7 +74,6 @@ class XenForoAdapter(BaseAdapter):
             post_list = doc.select('li.message.hasThreadmark')
             for post_el in post_list:
                 post_id = post_el['id'].split('-')[1]
-                print("Post:", post_id)
                 post_content = post_el.find('article')
                 post_content.blockquote.unwrap()
 

@@ -40,12 +40,11 @@ div.actions .button {
     margin-bottom: 0
 }
 
-div.fanfic-item {
-    margin-bottom: 5px;
-
+tr.fanfic-item td {
+    vertical-align: top;
 }
 
-div.fanfic-item a.title {
+tr.fanfic-item td a.title {
     display: block;
     font-size: 1.2rem;
 }

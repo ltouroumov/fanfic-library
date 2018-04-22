@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+BASE=`dirname $0`
+BASE=`realpath $BASE/..`
+
+PYTHON=`realpath "$BASE/venv/bin/python"`
+MAIN=`realpath "$BASE/src/main.py"`
+
+$PYTHON $MAIN $@

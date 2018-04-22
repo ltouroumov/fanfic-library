@@ -20,7 +20,6 @@ class HttpCache:
     def file_from_key(self, key):
         parts = re.findall(r'.{3}', key)
         file_path = path.join(self.cache_dir, *parts)
-        print("File:", file_path)
         os.makedirs(path.dirname(file_path), exist_ok=True)
         return file_path
 
@@ -52,7 +51,6 @@ class ThreadCache:
 
     def store_post(self, thread_key, post_id, contents):
         file_name = path.join(self.cache_dir, 'threads/%s/posts/%s.html' % (thread_key, post_id))
-        print("Storing Post:", file_name)
         os.makedirs(path.dirname(file_name), exist_ok=True)
         with open(file_name, mode="w+") as fd:
             fd.write(contents)
@@ -63,7 +61,6 @@ class ThreadCache:
 
     def fetch_post(self, thread_key, post_id):
         file_name = path.join(self.cache_dir, 'threads/%s/posts/%s.html' % (thread_key, post_id))
-        print("Fetching Post:", file_name)
         if not path.exists(file_name):
             return None
 
